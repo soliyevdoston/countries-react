@@ -75,7 +75,9 @@ export default function App() {
 
                         <p>
                           Capital:{" "}
-                          {country.capital ? country.capital[0] : "N/A"}
+                          {country.capital
+                            ? country.capital[0]
+                            : "Malumot mavjud emas"}
                         </p>
                       </CountryInfo>
                     </Link>
