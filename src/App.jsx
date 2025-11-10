@@ -20,9 +20,18 @@ export default function App() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
+
   return (
     <BrowserRouter>
       <GlobalStyle darkMode={darkMode} />
+      <DarkNext />
       <Header>
         <H2>Where in the world?</H2>
         <Dark onClick={() => setDarkMode(!darkMode)}>
@@ -32,7 +41,12 @@ export default function App() {
             width="20px"
             height="20px"
           />
-          <p>{darkMode ? "Light Mode" : "Dark Mode"}</p>
+          <p>
+            {(() => {
+              if (darkMode) return "Light Mode";
+              return "Dark Mode";
+            })()}
+          </p>
         </Dark>
       </Header>
 
@@ -41,9 +55,9 @@ export default function App() {
           path="/"
           element={
             loading ? (
-              <LoadingWrapper>
+              <Loading>
                 <Lottie animationData={loadingAnimation} loop={true} />
-              </LoadingWrapper>
+              </Loading>
             ) : (
               <Main>
                 {countries.map((country, index) => (
@@ -53,9 +67,17 @@ export default function App() {
                         src={country.flags.png}
                         alt={country.name.common}
                         width="264px"
-                        height="164px"
+                        height="160px"
                       />
-                      <p>{country.name.common}</p>
+                      <CountryName>{country.name.common}</CountryName>
+                      <CountryInfo>
+                        <p>Population: {country.population.toLocaleString()}</p>
+
+                        <p>
+                          Capital:{" "}
+                          {country.capital ? country.capital[0] : "N/A"}
+                        </p>
+                      </CountryInfo>
                     </Link>
                   </CountryCard>
                 ))}
@@ -74,10 +96,13 @@ const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    background-color: ${(props) => (props.darkMode ? "#111927" : "#f5f5f5")};
-    color: ${(props) => (props.darkMode ? "#fff" : "#000")};
     font-family: Arial, Helvetica, sans-serif;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
+  }
+
+  body.dark-mode {
+    background-color: black;;
+    color: #fff;
   }
 `;
 
@@ -89,11 +114,15 @@ export const Header = styled.div`
   width: 100%;
   padding: 20px;
   margin: 0 auto;
+  transition: background 0.3s;
 `;
+
 export const H2 = styled.h2`
   font-size: 24px;
+  padding-left: 80px;
 `;
 export const Dark = styled.div`
+  padding-right: 80px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -112,28 +141,58 @@ export const Main = styled.div`
   max-width: 1280px;
   margin: 0 auto;
 `;
-export const CountryCard = styled.div`
+export const CountryCard = styled.div.attrs(() => ({
+  className: "country-card",
+}))`
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
   width: 264px;
   text-align: center;
   cursor: pointer;
+  transition: 0.3s;
+
   a {
     text-decoration: none;
     color: inherit;
   }
+
   &:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   }
 `;
+
 export const Flag = styled.img`
   width: 100%;
   border-radius: 4px;
 `;
-export const LoadingWrapper = styled.div`
+export const CountryName = styled.h3`
+  margin: 10px 0 5px;
+`;
+export const CountryInfo = styled.div`
+  font-size: 14px;
+
+  p {
+    margin: 3px 0;
+  }
+`;
+export const Loading = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 300px;
+`;
+const DarkNext = createGlobalStyle`
+  body.dark-mode .country-card {
+    background-color: black;
+  }
+
+  body:not(.dark-mode) .country-card {
+    background-color: #fff;
+  }
+
+  body.dark-mode ${Header} {
+    background-color: black;
+    color: #fff;
+  }
 `;
