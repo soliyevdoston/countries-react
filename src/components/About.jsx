@@ -94,11 +94,12 @@ const Wrapper = styled.div`
 `;
 
 const BackButton = styled(Link)`
+  margin-bottom: 40px;
   display: inline-block;
   margin-bottom: 20px;
   text-decoration: none;
   color: inherit;
-  border: 1px solid #ccc;
+
   padding: 5px 10px;
   border-radius: 5px;
   &:hover {
